@@ -115,7 +115,7 @@ signout = (req, res) => {
 const auth = {
   signup: signup,
   signin: signin,
-  signout: signout,
+  signout: signout
 };
 
 module.exports = auth;
