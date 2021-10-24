@@ -1,5 +1,5 @@
 CREATE TABLE User (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT PRIMARY KEY AUTO_INCREMENT,
     email VARCHAR(255) NOT NULL,
     username VARCHAR(255) NOT NULL
 );
@@ -18,7 +18,7 @@ CREATE TABLE Profile (
 );
 
 CREATE TABLE Role (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    role_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL
 );
 
@@ -35,22 +35,22 @@ CREATE TABLE Follow (
 );
 
 CREATE TABLE Ingredient (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    ingredient_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) UNIQUE NOT NULL
 );
 
 CREATE TABLE Utensil (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    utensil_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) UNIQUE NOT NULL
 );
 
 CREATE TABLE Status (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    status_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) UNIQUE NOT NULL
 );
 
 CREATE TABLE Recipe (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    recipe_id INT PRIMARY KEY AUTO_INCREMENT,
     dish_name VARCHAR(255),
     cooking_time INT,
     description TEXT,
@@ -67,7 +67,7 @@ CREATE TABLE UserSaveRecipe (
 );
 
 CREATE TABLE UserReviewRecipe (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_review_recipe_id INT PRIMARY KEY AUTO_INCREMENT,
     user_id INT REFERENCES User(id),
     recipe_id INT REFERENCES Recipe(id),
     rate INT NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE RecipeUtensil (
 );
 
 CREATE TABLE Media (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    media_id INT PRIMARY KEY AUTO_INCREMENT,
     type VARCHAR(255) NOT NULL,
     path VARCHAR(255) NOT NULL,
     post_order INT NOT NULL,
@@ -99,7 +99,7 @@ CREATE TABLE Media (
 );
 
 CREATE TABLE FoodType (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    foodtype_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) UNIQUE NOT NULL
 );
 
@@ -110,7 +110,7 @@ CREATE TABLE RecipeFoodType (
 );
 
 CREATE TABLE Instruction (
-    id INT PRIMARY KEY AUTO_INCREMENT,
+    instruction_id INT PRIMARY KEY AUTO_INCREMENT,
     content TEXT NOT NULL,
     post_order INT NOT NULL,
     recipe_id INT REFERENCES Recipe(id)
