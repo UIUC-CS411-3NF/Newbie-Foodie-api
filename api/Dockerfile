@@ -4,5 +4,6 @@ WORKDIR /Newbie-Foodie-api
 COPY package.json .
 COPY .env .
 RUN npm install
+RUN npm install -g nodemon
 COPY . .
-CMD npm start
+CMD npm run devStart

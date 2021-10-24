@@ -1,23 +1,22 @@
 findByEmailSql = (email) => {
-	return `SELECT * FROM User WHERE email = '${email}';`;
-}
+  return `SELECT * FROM User WHERE email = '${email}';`;
+};
 
 findByEmailWithAuthSql = (email) => {
-	return `SELECT * FROM User NATURAL JOIN Auth WHERE email = '${email}';`;
-}
+  return `SELECT * FROM User NATURAL JOIN Auth WHERE email = '${email}';`;
+};
 
 insertNewSql = (email, username, passwordhash) => {
-	return `INSERT INTO User(email, username) VALUES ('${email}', '${username}'); INSERT INTO Auth(user_id, password_hash) VALUES (LAST_INSERT_ID(), '${passwordhash}');`;
-}
+  return `INSERT INTO User(email, username) VALUES ('${email}', '${username}'); INSERT INTO Auth(user_id, password_hash) VALUES (LAST_INSERT_ID(), '${passwordhash}');`;
+};
 
 const user = {
-	findByEmailSql: findByEmailSql,
-	findByEmailWithAuthSql: findByEmailWithAuthSql,
-	insertNewSql: insertNewSql
+  findByEmailSql: findByEmailSql,
+  findByEmailWithAuthSql: findByEmailWithAuthSql,
+  insertNewSql: insertNewSql,
 };
 
 module.exports = user;
-
 
 /*
 
