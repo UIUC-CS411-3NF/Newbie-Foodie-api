@@ -6,12 +6,9 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 signup = (req, res) => {
+  // TODO: these three should be in a transaction or sth
   db.exec(
-    user.insertNewSql(
-      req.body.email,
-      req.body.username,
-      bcrypt.hashSync(req.body.password, 8)
-    ),
+    user.insertNewUserSql(req.body.email, req.body.username),
     (error, results) => {
       if (error) {
         res.status(400).send({
@@ -19,9 +16,36 @@ signup = (req, res) => {
         });
         return;
       }
-      console.log(results);
 
-      res.status(200).send({ message: "User was registered successfully!" });
+      const user_id = results.insertId;
+      db.exec(
+        user.insertNewAuthSql(user_id, bcrypt.hashSync(req.body.password, 8)),
+        (error, results) => {
+          if (error) {
+            res.status(400).send({
+              message: error.message,
+            });
+            return;
+          }
+        }
+      );
+      description = "Welcome to my profile!";
+      photo = "default_photo_url";
+      db.exec(
+        user.insertNewProfileSql(user_id, description, photo),
+        (error, results) => {
+          if (error) {
+            res.status(400).send({
+              message: error.message,
+            });
+            return;
+          }
+          res.status(200).send({
+            message: "User was registered successfully!",
+            results: results,
+          });
+        }
+      );
     }
   );
 };
@@ -55,7 +79,7 @@ signin = (req, res) => {
     }
 
     var token = jwt.sign(
-      { id: user.id }, // results[0] ?
+      { id: results[0].id },
       config.secret,
       { expiresIn: 86400 } // 24 hours
     );

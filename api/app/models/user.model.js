@@ -6,37 +6,24 @@ findByEmailWithAuthSql = (email) => {
   return `SELECT * FROM User NATURAL JOIN Auth WHERE email = '${email}';`;
 };
 
-insertNewSql = (email, username, passwordhash) => {
-  return `INSERT INTO User(email, username) VALUES ('${email}', '${username}'); INSERT INTO Auth(user_id, password_hash) VALUES (LAST_INSERT_ID(), '${passwordhash}');`;
+insertNewUserSql = (email, username) => {
+  return `INSERT INTO User(email, username) VALUES ('${email}', '${username}');`;
+};
+
+insertNewAuthSql = (user_id, passwordhash) => {
+  return `INSERT INTO Auth(user_id, password_hash) VALUES (${user_id}, '${passwordhash}');`;
+};
+
+insertNewProfileSql = (user_id, description, photo) => {
+  return `INSERT INTO Profile(user_id, description, photo) VALUES (${user_id}, '${description}', '${photo}')`;
 };
 
 const user = {
   findByEmailSql: findByEmailSql,
   findByEmailWithAuthSql: findByEmailWithAuthSql,
-  insertNewSql: insertNewSql,
+  insertNewUserSql: insertNewUserSql,
+  insertNewAuthSql: insertNewAuthSql,
+  insertNewProfileSql: insertNewProfileSql,
 };
 
 module.exports = user;
-
-/*
-
-CREATE TABLE User (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    email VARCHAR(255) NOT NULL,
-    username VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE Auth (
-    user_id INT REFERENCES User(id),
-    password_hash VARCHAR(255) NOT NULL,
-    PRIMARY KEY (user_id)
-);
-
-CREATE TABLE Profile (
-    user_id INT REFERENCES User(id),
-    description TEXT NOT NULL,
-    photo VARCHAR(255) NOT NULL,
-    PRIMARY KEY (user_id)
-);
-
-*/
