@@ -25,9 +25,9 @@ exec = (sqlcmd, callback) => {
 };
 
 const db = {
-	user: require("./user.model.js"),
-	recipe: require("./recipe.model.js"),
-	exec: exec
+  user: require("./user.model.js"),
+  recipe: require("./recipe.model.js"),
+  exec: exec
 }
 
 module.exports = db;
