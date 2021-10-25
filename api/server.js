@@ -1,11 +1,12 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
-
+const cors = require('cors')
 require("dotenv").config();
 
 const app = express();
 
+app.use(cors());
 app.use(cookieParser());
 
 // parse requests of content-type - application/json
