@@ -5,8 +5,12 @@ const cors = require('cors')
 require("dotenv").config();
 
 const app = express();
+var corsOptions = {
+  origin: process.env.CORS_ORIGIN,
+  credentials: true,
+}
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(cookieParser());
 
 // parse requests of content-type - application/json

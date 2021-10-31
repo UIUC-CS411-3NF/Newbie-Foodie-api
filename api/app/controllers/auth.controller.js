@@ -78,6 +78,7 @@ signin = (req, res) => {
        *  This is use if jwt is handled by front-end
        */
 
+
       // res.status(200).send({
       //  id: user.id,
       //  username: results[0].username,
