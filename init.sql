@@ -54,8 +54,8 @@ CREATE TABLE Recipe (
     dish_name VARCHAR(255),
     cooking_time INT,
     description TEXT,
-    create_date DATETIME NOT NULL,
-    last_update_date DATETIME NOT NULL,
+    create_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_update_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     status_id INT REFERENCES Status(id),
     author_id INT REFERENCES User(id)
 );
