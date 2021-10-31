@@ -14,13 +14,16 @@ conn.connect((err) => {
   if (err) throw err;
 });
 
-exec = (sqlcmd, callback) => {
-  conn.query(sqlcmd, (error, results) => {
-    if (error) {
-      console.log("db query fail", error);
-      return callback([]);
-    }
-    return callback(null, results);
+exec = (sqlcmd) => {
+  return new Promise((resolve, reject) => {
+    conn.query(sqlcmd, (error, results) => {
+      if (error) {
+        console.log("db query fail", error);
+        reject(err);
+        return;
+      }
+      resolve(results);
+    });
   });
 };
 

@@ -6,97 +6,85 @@ findRecipeByAuthor = (req, res) => {
     return res.status(422).send("NO PARAMS PASSED")
   }
 
-  db.exec(
-    recipe.findByAuthorSql(req.query.uid), (error, results) => {
-      if (error) {
-        res.status(400).send({
-          message: error.message
-        });
-        return;
-      }
-
+  db.exec(recipe.findByAuthorSql(req.query.uid))
+    .then(results => {
       console.log(results);
-
-      res.status(200)
-        .send(results);
+      res.status(200).send(results);
+    })
+    .catch(error => {
+      res.status(400).send({
+        message: error.message
+      });
+      return;
     });
 };
 
 findRecipeByID = (req, res) => {
-  db.exec(
-    recipe.findByIDSql(req.params.rid), (error, results) => {
-      if (error) {
-        res.status(400).send({
-          message: error.message
-        });
-        return;
-      }
-
+  db.exec(recipe.findByIDSql(req.params.rid))
+    .then(results => {
       console.log(results);
-
-      res.status(200)
-        .send(results);
+      res.status(200).send(results);
+    })
+    .catch(error => {
+      res.status(400).send({
+        message: error.message
+      });
+      return;
     });
 };
 
 postRecipe = (req, res) => {
-  db.exec(
-    recipe.insertNewSql(
+  db.exec(recipe.insertNewSql(
       req.body.dish_name,
       req.body.cooking_time,
       req.body.description,
       req.userId
-    ), (error, results) => {
-      if (error) {
-        res.status(400).send({
-          message: error.message
-        });
-        return;
-      }
-
+    ))
+    .then(results => {
       console.log(results);
-
       res.status(200)
         .send({ message: "Recipe was posted successfully!" });
+    })
+    .catch(error => {
+      res.status(400).send({
+        message: error.message
+      });
+      return;
     });
 };
 
 editRecipe = (req, res) => {
-  db.exec(
-    recipe.editSql(
+  db.exec(recipe.editSql(
       req.body.dish_name,
       req.body.cooking_time,
       req.body.description,
       req.params.rid
-    ), (error, results) => {
-      if (error) {
-        res.status(400).send({
-          message: error.message
-        });
-        return;
-      }
-
+    ))
+    .then(results => {
       console.log(results);
-
       res.status(200)
         .send({ message: "Recipe was edited successfully!" });
+    })
+    .catch(error => {
+      res.status(400).send({
+        message: error.message
+      });
+      return;
     });
 };
 
 deleteRecipe = (req, res) => {
-  db.exec(
-    recipe.deleteSql(req.params.rid, req.userId), (error, results) => {
-      if (error) {
-        res.status(400).send({
-          message: error.message
-        });
-        return;
-      }
-
+  db.exec(recipe.deleteSql(req.params.rid, req.userId))
+    .then(results => {
       console.log(results);
-
       res.status(200)
         .send({ message: "Recipe was deleted successfully!" });
+    })
+    .catch(error => {
+      res.status(400).send({
+        message: error.message
+      });
+      return;
     });
 };
 

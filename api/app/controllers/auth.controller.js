@@ -7,101 +7,99 @@ const bcrypt = require("bcryptjs");
 
 signup = (req, res) => {
   // TODO: these three should be in a transaction or sth
-  db.exec(
-    user.insertNewUserSql(req.body.email, req.body.username),
-    (error, results) => {
-      if (error) {
-        res.status(400).send({
-          message: error.message,
-        });
-        return;
-      }
-
+  db.exec(user.insertNewUserSql(req.body.email, req.body.username))
+    .then(results => {
       const user_id = results.insertId;
       db.exec(
-        user.insertNewAuthSql(user_id, bcrypt.hashSync(req.body.password, 8)),
-        (error, results) => {
-          if (error) {
-            res.status(400).send({
-              message: error.message,
+        user.insertNewAuthSql(
+          user_id,
+          bcrypt.hashSync(req.body.password, 8)
+        ))
+        .then(results => {
+          description = "Welcome to my profile!";
+          photo = "default_photo_url";
+          db.exec(user.insertNewProfileSql(user_id, description, photo))
+            .then(results => {
+              res.status(200).send({
+                message: "User was registered successfully!"
+              });
+            })
+            .catch(error => {
+              res.status(400).send({
+                message: error.message,
+              });
+              return;
             });
-            return;
-          }
-        }
-      );
-      description = "Welcome to my profile!";
-      photo = "default_photo_url";
-      db.exec(
-        user.insertNewProfileSql(user_id, description, photo),
-        (error, results) => {
-          if (error) {
-            res.status(400).send({
-              message: error.message,
-            });
-            return;
-          }
-          res.status(200).send({
-            message: "User was registered successfully!",
-            results: results,
+        })
+        .catch(error => {
+          res.status(400).send({
+            message: error.message,
           });
-        }
-      );
-    }
-  );
-};
-
-signin = (req, res) => {
-  db.exec(user.findByEmailWithAuthSql(req.body.email), (error, results) => {
-    if (error) {
+          return;
+        });
+    })
+    .catch(error => {
       res.status(400).send({
         message: error.message,
       });
       return;
-    }
+    });
+};
 
-    if (results.length == 0) {
+signin = (req, res) => {
+  db.exec(user.findByEmailWithAuthSql(req.body.email))
+    .then(results => {
+      if (results.length == 0) {
+        res.status(400).send({
+          message: "Failed! Email or password incorrect!",
+        });
+        return;
+      }
+
+      var passwordIsValid = bcrypt.compareSync(
+        req.body.password,
+        results[0].password_hash
+      );
+
+      if (!passwordIsValid) {
+        res.status(400).send({
+          message: "Failed! Email or password incorrect!",
+        });
+        return;
+      }
+
+      var token = jwt.sign(
+        { id: results[0].id },
+        config.secret,
+        { expiresIn: 86400 } // 24 hours
+      );
+
+      /*
+       *  This is use if jwt is handled by front-end
+       */
+
+
+      // res.status(200).send({
+      //  id: user.id,
+      //  username: results[0].username,
+      //  email: results[0].email,
+      //  accessToken: token
+      // });
+
+      res
+        .cookie("access_token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+        })
+        .status(200)
+        .json({ message: "Sign in successfully!" });
+    })
+    .catch(error => {
       res.status(400).send({
-        message: "Failed! Email or password incorrect!",
+        message: error.message,
       });
       return;
-    }
-
-    var passwordIsValid = bcrypt.compareSync(
-      req.body.password,
-      results[0].password_hash
-    );
-
-    if (!passwordIsValid) {
-      res.status(400).send({
-        message: "Failed! Email or password incorrect!",
-      });
-      return;
-    }
-
-    var token = jwt.sign(
-      { id: results[0].id },
-      config.secret,
-      { expiresIn: 86400 } // 24 hours
-    );
-
-    /*
-     *	This is use if jwt is handled by front-end
-     */
-
-    // res.status(200).send({
-    // 	id: user.id,
-    // 	username: results[0].username,
-    // 	email: results[0].email,
-    // 	accessToken: token
-    // });
-    res
-      .cookie("access_token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-      })
-      .status(200)
-      .json({ message: "Sign in successfully!" });
-  });
+    });
 };
 
 signout = (req, res) => {
