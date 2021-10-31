@@ -94,7 +94,8 @@ signin = (req, res) => {
     // 	email: results[0].email,
     // 	accessToken: token
     // });
-
+    console.log('login!!!');
+    console.log(token);
     res
       .cookie("access_token", token, {
         httpOnly: true,
