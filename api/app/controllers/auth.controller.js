@@ -69,7 +69,7 @@ signin = (req, res) => {
       }
 
       var token = jwt.sign(
-        { id: results[0].id },
+        { id: results[0].user_id },
         config.secret,
         { expiresIn: 86400 } // 24 hours
       );

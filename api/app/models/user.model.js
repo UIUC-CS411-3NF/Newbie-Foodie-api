@@ -3,7 +3,7 @@ findByEmailSql = (email) => {
 };
 
 findByEmailWithAuthSql = (email) => {
-  return `SELECT * FROM User JOIN Auth ON User.id = Auth.user_id WHERE email = '${email}';`;
+  return `SELECT * FROM User NATURAL JOIN Auth WHERE email = '${email}';`;
 };
 
 insertNewUserSql = (email, username) => {
