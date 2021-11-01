@@ -1,9 +1,13 @@
+findByIdSql = (user_id) => {
+  return `SELECT * FROM User WHERE user_id = '${user_id}';`;
+}
+
 findByEmailSql = (email) => {
   return `SELECT * FROM User WHERE email = '${email}';`;
 };
 
 findByEmailWithAuthSql = (email) => {
-  return `SELECT * FROM User JOIN Auth ON User.id = Auth.user_id WHERE email = '${email}';`;
+  return `SELECT * FROM User NATURAL JOIN Auth WHERE email = '${email}';`;
 };
 
 insertNewUserSql = (email, username) => {
@@ -19,6 +23,7 @@ insertNewProfileSql = (user_id, description, photo) => {
 };
 
 const user = {
+  findByIdSql: findByIdSql,
   findByEmailSql: findByEmailSql,
   findByEmailWithAuthSql: findByEmailWithAuthSql,
   insertNewUserSql: insertNewUserSql,

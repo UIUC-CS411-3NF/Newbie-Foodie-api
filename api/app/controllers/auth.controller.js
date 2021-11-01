@@ -5,6 +5,19 @@ const user = db.user;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
+
+verify = (req, res) => {
+  db
+    .exec(user.findByIdSql(req.userId))
+    .then(results => results[0])
+    .then(result => {
+      return res
+        .status(200)
+        .json({ data: result, message: "Authorized"});
+    });
+
+};
+
 signup = (req, res) => {
   // TODO: these three should be in a transaction or sth
   db.exec(user.insertNewUserSql(req.body.email, req.body.username))
@@ -69,7 +82,7 @@ signin = (req, res) => {
       }
 
       var token = jwt.sign(
-        { id: results[0].id },
+        { id: results[0].user_id },
         config.secret,
         { expiresIn: 86400 } // 24 hours
       );
@@ -112,7 +125,8 @@ signout = (req, res) => {
 const auth = {
   signup: signup,
   signin: signin,
-  signout: signout
+  signout: signout,
+  verify: verify
 };
 
 module.exports = auth;
