@@ -7,9 +7,15 @@ const bcrypt = require("bcryptjs");
 
 
 verify = (req, res) => {
-  return res
-    .status(200)
-    .json({ userId: req.userId, message: "Authorized"});
+  db
+    .exec(user.findByIdSql(req.userId))
+    .then(results => results[0])
+    .then(result => {
+      return res
+        .status(200)
+        .json({ data: result, message: "Authorized"});
+    });
+
 };
 
 signup = (req, res) => {

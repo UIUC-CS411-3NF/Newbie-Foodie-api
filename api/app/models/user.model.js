@@ -1,3 +1,7 @@
+findByIdSql = (user_id) => {
+  return `SELECT * FROM User WHERE user_id = '${user_id}';`;
+}
+
 findByEmailSql = (email) => {
   return `SELECT * FROM User WHERE email = '${email}';`;
 };
@@ -19,6 +23,7 @@ insertNewProfileSql = (user_id, description, photo) => {
 };
 
 const user = {
+  findByIdSql: findByIdSql,
   findByEmailSql: findByEmailSql,
   findByEmailWithAuthSql: findByEmailWithAuthSql,
   insertNewUserSql: insertNewUserSql,
