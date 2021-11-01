@@ -5,6 +5,13 @@ const user = db.user;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
+
+verify = (req, res) => {
+  return res
+    .status(200)
+    .json({ userId: req.userId, message: "Authorized"});
+};
+
 signup = (req, res) => {
   // TODO: these three should be in a transaction or sth
   db.exec(user.insertNewUserSql(req.body.email, req.body.username))
@@ -112,7 +119,8 @@ signout = (req, res) => {
 const auth = {
   signup: signup,
   signin: signin,
-  signout: signout
+  signout: signout,
+  verify: verify
 };
 
 module.exports = auth;
