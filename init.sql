@@ -5,13 +5,13 @@ CREATE TABLE User (
 );
 
 CREATE TABLE Auth (
-    user_id INT REFERENCES User(id),
+    user_id INT REFERENCES User(user_id),
     password_hash VARCHAR(255) NOT NULL,
     PRIMARY KEY (user_id)
 );
 
 CREATE TABLE Profile (
-    user_id INT REFERENCES User(id),
+    user_id INT REFERENCES User(user_id),
     description TEXT NOT NULL,
     photo VARCHAR(255) NOT NULL,
     PRIMARY KEY (user_id)
@@ -23,14 +23,14 @@ CREATE TABLE Role (
 );
 
 CREATE TABLE UserRole (
-    user_id INT REFERENCES User(id),
-    role_id INT REFERENCES Role(id),
+    user_id INT REFERENCES User(user_id),
+    role_id INT REFERENCES Role(role_id),
     PRIMARY KEY (user_id, role_id)
 );
 
 CREATE TABLE Follow (
-    follower_id INT REFERENCES User(id),
-    followee_id INT REFERENCES User(id),
+    follower_id INT REFERENCES User(user_id),
+    followee_id INT REFERENCES User(user_id),
     PRIMARY KEY (follower_id, followee_id)
 );
 
@@ -56,37 +56,37 @@ CREATE TABLE Recipe (
     description TEXT,
     create_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     last_update_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    status_id INT REFERENCES Status(id),
-    author_id INT REFERENCES User(id)
+    status_id INT REFERENCES Status(status_id),
+    author_id INT REFERENCES User(user_id)
 );
 
 CREATE TABLE UserSaveRecipe (
-    user_id INT REFERENCES User(id),
-    recipe_id INT REFERENCES Recipe(id),
+    user_id INT REFERENCES User(user_id),
+    recipe_id INT REFERENCES Recipe(recipe_id),
     PRIMARY KEY (user_id, recipe_id)
 );
 
 CREATE TABLE UserReviewRecipe (
     user_review_recipe_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT REFERENCES User(id),
-    recipe_id INT REFERENCES Recipe(id),
+    user_id INT REFERENCES User(user_id),
+    recipe_id INT REFERENCES Recipe(recipe_id),
     rate INT NOT NULL,
     comment TEXT,
-    create_date DATETIME,
-    last_update_date DATETIME,
-    status_id INT REFERENCES Status(id)
+    create_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    last_update_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    status_id INT REFERENCES Status(status_id)
 );
 
 CREATE TABLE RecipeRequireIngredient (
-    recipe_id INT REFERENCES Recipe(id),
-    ingredient_id INT REFERENCES Ingredient(id),
+    recipe_id INT REFERENCES Recipe(recipe_id),
+    ingredient_id INT REFERENCES Ingredient(ingredient_id),
     amount INT,
     PRIMARY KEY (recipe_id, ingredient_id)
 );
 
 CREATE TABLE RecipeUtensil (
-    recipe_id INT REFERENCES Recipe(id),
-    utensil_id INT REFERENCES Utensil(id),
+    recipe_id INT REFERENCES Recipe(recipe_id),
+    utensil_id INT REFERENCES Utensil(utensil_id),
     PRIMARY KEY (recipe_id, utensil_id)
 );
 
@@ -95,7 +95,7 @@ CREATE TABLE Media (
     type VARCHAR(255) NOT NULL,
     path VARCHAR(255) NOT NULL,
     post_order INT NOT NULL,
-    recipe_id INT REFERENCES Recipe(id)
+    recipe_id INT REFERENCES Recipe(recipe_id)
 );
 
 CREATE TABLE FoodType (
@@ -104,14 +104,14 @@ CREATE TABLE FoodType (
 );
 
 CREATE TABLE RecipeFoodType (
-    recipe_id INT REFERENCES Recipe(id),
-    food_type_id INT REFERENCES FoodType(id),
-    PRIMARY KEY (recipe_id, food_type_id)
+    recipe_id INT REFERENCES Recipe(recipe_id),
+    foodtype_id INT REFERENCES FoodType(foodtype_id),
+    PRIMARY KEY (recipe_id, foodtype_id)
 );
 
 CREATE TABLE Instruction (
     instruction_id INT PRIMARY KEY AUTO_INCREMENT,
     content TEXT NOT NULL,
     post_order INT NOT NULL,
-    recipe_id INT REFERENCES Recipe(id)
+    recipe_id INT REFERENCES Recipe(recipe_id)
 );
