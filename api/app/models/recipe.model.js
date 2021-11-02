@@ -3,7 +3,7 @@ findByAuthorSql = (uid) => {
 }
 
 findByIDSql = (rid) => {
-  return `SELECT * FROM Recipe WHERE id = '${rid}';`;
+  return `SELECT * FROM Recipe WHERE recipe_id = '${rid}';`;
 }
 
 insertNewSql = (dish_name, cooking_time, description, uid) => {
@@ -11,11 +11,11 @@ insertNewSql = (dish_name, cooking_time, description, uid) => {
 }
 
 editSql = (dish_name, cooking_time, description, rid) => {
-  return `UPDATE Recipe SET dish_name = '${dish_name}', cooking_time = ${cooking_time}, description = '${description}' WHERE id = '${rid}';`; 
+  return `UPDATE Recipe SET dish_name = '${dish_name}', cooking_time = ${cooking_time}, description = '${description}' WHERE recipe_id = '${rid}';`; 
 }
 
 deleteSql = (rid, uid) => {
-  return `DELETE FROM Recipe WHERE id = '${rid}' AND author_id = '${uid}';`; 
+  return `DELETE FROM Recipe WHERE recipe_id = '${rid}' AND author_id = '${uid}';`; 
 }
 
 const recipe = {
