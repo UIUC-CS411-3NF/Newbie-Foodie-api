@@ -18,12 +18,17 @@ deleteSql = (rid, uid) => {
   return `DELETE FROM Recipe WHERE recipe_id = '${rid}' AND author_id = '${uid}';`; 
 }
 
+findByDishNameSql = (name) => {
+  return `SELECT * FROM Recipe WHERE dish_name LIKE '%${name}%' LIMIT 20;`;
+}
+
 const recipe = {
   findByAuthorSql: findByAuthorSql,
   findByIDSql: findByIDSql,
   insertNewSql: insertNewSql,
   editSql: editSql,
-  deleteSql: deleteSql
+  deleteSql: deleteSql,
+  findByDishNameSql: findByDishNameSql
 };
 
 module.exports = recipe
