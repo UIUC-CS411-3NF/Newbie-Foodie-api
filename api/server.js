@@ -28,6 +28,8 @@ app.get("/", (req, res) => {
 require('./app/routes/auth.routes')(app);
 require('./app/routes/user.routes')(app);
 require('./app/routes/recipe.routes')(app);
+require('./app/routes/sql.routes')(app);
+require('./app/routes/advsql.routes')(app);
 
 
 const PORT = process.env.PORT || 8080;

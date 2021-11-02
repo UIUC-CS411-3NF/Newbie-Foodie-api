@@ -88,12 +88,31 @@ deleteRecipe = (req, res) => {
     });
 };
 
+findRecipeByDishName = (req, res) => {
+  if (!req.query || !req.query.dish_name) {
+    req.query.dish_name = '';
+  }
+
+  db.exec(recipe.findByDishNameSql(req.query.dish_name))
+    .then(results => {
+      console.log(results);
+      res.status(200).send(results);
+    })
+    .catch(error => {
+      res.status(400).send({
+        message: error.message
+      });
+      return;
+    });
+};
+
 const Recipe = {
   findRecipeByAuthor: findRecipeByAuthor,
   findRecipeByID: findRecipeByID,
   postRecipe: postRecipe,
   editRecipe: editRecipe,
-  deleteRecipe: deleteRecipe
+  deleteRecipe: deleteRecipe,
+  findRecipeByDishName: findRecipeByDishName
 };
 
 module.exports = Recipe;
