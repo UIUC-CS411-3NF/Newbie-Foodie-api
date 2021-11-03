@@ -27,11 +27,15 @@ findByDishNameSql = (name) => {
 }
 
 findRequireIngredientSql = (recipe_id) => {
-  return `SELECT * FROM RecipeRequireIngredient NATURAL JOIN Ingredient WHERE recipe_id = ${recipe_id}`
+  return `SELECT * FROM RecipeRequireIngredient NATURAL JOIN Ingredient WHERE recipe_id = ${recipe_id};`;
 }
 
 insertRequireIngredientSql = (recipe_id, ingredient_id, amount) => {
   return `INSERT INTO RecipeRequireIngredient(recipe_id, ingredient_id, amount) VALUES (${recipe_id}, ${ingredient_id}, ${amount});`;
+}
+
+deleteRequireIngredientSql = (recipe_id) => {
+  return `DELETE FROM RecipeRequireIngredient WHERE recipe_id = ${recipe_id};`;
 }
 
 const recipe = {
@@ -44,6 +48,7 @@ const recipe = {
   findByDishNameSql: findByDishNameSql,
   findRequireIngredientSql: findRequireIngredientSql,
   insertRequireIngredientSql: insertRequireIngredientSql,
+  deleteRequireIngredientSql: deleteRequireIngredientSql,
 };
 
 module.exports = recipe
