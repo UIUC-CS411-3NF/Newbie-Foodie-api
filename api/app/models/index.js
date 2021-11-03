@@ -30,6 +30,7 @@ exec = (sqlcmd) => {
 const db = {
   user: require("./user.model.js"),
   recipe: require("./recipe.model.js"),
+  ingredient: require("./ingredient.model.js"),
   exec: exec
 }
 
