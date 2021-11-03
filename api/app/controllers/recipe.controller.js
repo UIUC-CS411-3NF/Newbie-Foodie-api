@@ -21,9 +21,17 @@ findRecipeByAuthor = (req, res) => {
 
 findRecipeByID = (req, res) => {
   db.exec(recipe.findByIDSql(req.params.rid))
-    .then(results => {
-      console.log(results);
-      res.status(200).send(results);
+    .then(results => results[0])
+    .then(result => {
+      result.ingredients = [];
+      db.exec(recipe.findRequireIngredientSql(result.recipe_id))
+        .then(ingredients => {
+          ingredients.forEach(ingredient => {
+            delete ingredient.recipe_id;
+            result.ingredients.push(ingredient);
+          })
+          res.status(200).send(result);
+        })
     })
     .catch(error => {
       res.status(400).send({

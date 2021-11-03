@@ -22,6 +22,10 @@ findByDishNameSql = (name) => {
   return `SELECT * FROM Recipe WHERE dish_name LIKE '%${name}%' LIMIT 20;`;
 }
 
+findRequireIngredientSql = (recipe_id) => {
+  return `SELECT * FROM RecipeRequireIngredient NATURAL JOIN Ingredient WHERE recipe_id = ${recipe_id}`
+}
+
 insertRequireIngredientSql = (recipe_id, ingredient_id, amount) => {
   return `INSERT INTO RecipeRequireIngredient(recipe_id, ingredient_id, amount) VALUES (${recipe_id}, ${ingredient_id}, ${amount});`;
 }
@@ -33,6 +37,7 @@ const recipe = {
   editSql: editSql,
   deleteSql: deleteSql,
   findByDishNameSql: findByDishNameSql,
+  findRequireIngredientSql: findRequireIngredientSql,
   insertRequireIngredientSql: insertRequireIngredientSql,
 };
 
