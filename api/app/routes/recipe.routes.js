@@ -10,7 +10,7 @@ module.exports = function(app) {
     next();
   });
 
-  app.get("/api/v1/recipe", controller.findRecipeByDishName);
+  app.get("/api/v1/recipe", controller.findRecipe);
 
   app.get("/api/v1/recipe/:rid", controller.findRecipeByID);
 

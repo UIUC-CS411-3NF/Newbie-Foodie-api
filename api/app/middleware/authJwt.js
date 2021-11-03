@@ -7,7 +7,6 @@ verifyToken = (req, res, next) => {
    */
 
   // const token = req.headers["x-access-token"];
-
   const token = req.cookies.access_token;
 
   if (!token) {
