@@ -40,8 +40,20 @@ postRecipe = (req, res) => {
       req.body.description,
       req.userId
     ))
-    .then(results => {
-      console.log(results);
+    .then(result => {
+      console.log(result);
+      const promises = [];
+      console.log(req.body.ingredients)
+      if (req.body.ingredients) {
+        req.body.ingredients.forEach(ingredient => {
+          promises.push(
+            db.exec(recipe.insertRequireIngredientSql(result.insertId, ingredient.ingredient_id, ingredient.amount))
+          )
+        })
+      }
+      Promise.all(promises).then((values) => {
+        console.log(values);
+      });
       res.status(200)
         .send({ message: "Recipe was posted successfully!" });
     })
