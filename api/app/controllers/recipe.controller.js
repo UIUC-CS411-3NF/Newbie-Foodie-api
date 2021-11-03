@@ -78,10 +78,9 @@ postRecipe = (req, res) => {
         });
       }
       Promise.all(promises).then((values) => {
-        console.log(values);
+        res.status(200)
+          .send({ message: "Recipe was posted successfully!" });
       });
-      res.status(200)
-        .send({ message: "Recipe was posted successfully!" });
     })
     .catch(error => {
       res.status(400).send({
@@ -92,20 +91,45 @@ postRecipe = (req, res) => {
 };
 
 editRecipe = (req, res) => {
-  db.exec(recipe.editSql(
-      req.body.dish_name,
-      req.body.cooking_time,
-      req.body.description,
-      req.params.rid
-    ))
-    .then(results => {
-      console.log(results);
-      res.status(200)
-        .send({ message: "Recipe was edited successfully!" });
+  const promises = [];
+  promises.push(
+    db.exec(
+      recipe.editSql(
+        req.body.dish_name,
+        req.body.cooking_time,
+        req.body.description,
+        req.params.rid
+      )
+    )
+  );
+  promises.push(
+    db.exec(
+      recipe.deleteRequireIngredientSql(req.params.rid)
+    )
+  );
+  Promise.all(promises)
+    .then((values) => {
+      const _promises = [];
+      if (req.body.ingredients) {
+        req.body.ingredients.forEach((ingredient) => {
+          _promises.push(
+            db.exec(
+              recipe.insertRequireIngredientSql(
+                req.params.rid,
+                ingredient.ingredient_id,
+                ingredient.amount
+              )
+            )
+          );
+        });
+      }
+      Promise.all(_promises).then((values) => {
+        res.status(200).send({ message: "Recipe was edited successfully!" });
+      });
     })
-    .catch(error => {
+    .catch((error) => {
       res.status(400).send({
-        message: error.message
+        message: error.message,
       });
       return;
     });
