@@ -2,8 +2,8 @@ FROM node:16
 
 WORKDIR /Newbie-Foodie-api
 
-COPY package*.json .
-COPY .env .
+COPY package.json .
+COPY package-lock.json .
 
 RUN npm install
 
