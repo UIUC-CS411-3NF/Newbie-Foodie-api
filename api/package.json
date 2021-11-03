@@ -1,4 +1,7 @@
 {
+  "name": "newbie_foodie",
+  "version": "0.1.0",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "devStart": "nodemon server.js"
