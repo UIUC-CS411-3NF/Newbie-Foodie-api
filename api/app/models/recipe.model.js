@@ -1,3 +1,7 @@
+getRandomSql = (n) => {
+  return `SELECT * FROM Recipe ORDER BY RAND() LIMIT ${n};`;
+}
+
 findByAuthorSql = (uid) => {
   return `SELECT * FROM Recipe WHERE author_id = '${uid}';`;
 }
@@ -31,6 +35,7 @@ insertRequireIngredientSql = (recipe_id, ingredient_id, amount) => {
 }
 
 const recipe = {
+  getRandomSql: getRandomSql,
   findByAuthorSql: findByAuthorSql,
   findByIDSql: findByIDSql,
   insertNewSql: insertNewSql,
