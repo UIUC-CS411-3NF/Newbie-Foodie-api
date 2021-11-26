@@ -30,9 +30,18 @@ findRecipe = (req, res) => {
       });
       return Promise.all(promises);
     });
+  const getUtensilPromise = getRecipePromise
+    .then((results) => {
+      const promises = [];
+      results.forEach(result => {
+        result.utensils = [];
+        promises.push(db.exec(Recipe.findUtensilSql(result.recipe_id)));
+      });
+      return Promise.all(promises);
+    });
 
-  return Promise.all([getRecipePromise, getIngredientPromise, getFoodtypePromise])
-    .then(([recipes, ingredientResults, foodtypeResults]) => {
+  return Promise.all([getRecipePromise, getIngredientPromise, getFoodtypePromise, getUtensilPromise])
+    .then(([recipes, ingredientResults, foodtypeResults, utensilResults]) => {
       ingredientResults.forEach((ingredients, idx) => {
         ingredients.forEach((ingredient) => {
           delete ingredient.recipe_id;
@@ -43,6 +52,12 @@ findRecipe = (req, res) => {
         foodtypes.forEach((foodtype) => {
           delete foodtype.recipe_id;
           recipes[idx].foodtypes.push(foodtype);
+        });
+      });
+      utensilResults.forEach((utensils, idx) => {
+        utensils.forEach((utensil) => {
+          delete utensil.recipe_id;
+          recipes[idx].utensils.push(utensil);
         });
       });
       return res.status(200).send(recipes);
@@ -68,9 +83,15 @@ findRecipeByID = (req, res) => {
       result.foodtypes = [];
       return db.exec(Recipe.findFoodtypeSql(result.recipe_id));
     });
+  const getUtensilPromise = getRecipePromise
+    .then((results) => results[0])
+    .then((result) => {
+      result.utensils = [];
+      return db.exec(Recipe.findUtensilSql(result.recipe_id));
+    });
 
-  return Promise.all([getRecipePromise, getIngredientPromise, getFoodtypePromise])
-    .then(([recipes, ingredients, foodtypes]) => {
+  return Promise.all([getRecipePromise, getIngredientPromise, getFoodtypePromise, getUtensilPromise])
+    .then(([recipes, ingredients, foodtypes, utensils]) => {
       recipe = recipes[0];
       ingredients.forEach((ingredient) => {
         delete ingredient.recipe_id;
@@ -79,6 +100,10 @@ findRecipeByID = (req, res) => {
       foodtypes.forEach((foodtype) => {
         delete foodtype.recipe_id;
         recipe.foodtypes.push(foodtype);
+      });
+      utensils.forEach((utensil) => {
+        delete utensil.recipe_id;
+        recipe.utensils.push(utensil);
       });
       return res.status(200).send(recipe);
     })
@@ -112,6 +137,13 @@ postRecipe = (req, res) => {
           );
         });
       }
+      if (req.body.utensils) {
+        req.body.utensils.forEach((utensil) => {
+          promises.push(
+            db.exec(Recipe.insertUtensilSql(result.insertId, utensil.utensil_id))
+          );
+        });
+      }
       return Promise.all(promises);
     })
     .then((values) => {
@@ -141,6 +173,9 @@ editRecipe = (req, res) => {
     ),
     db.exec(
       Recipe.deleteFoodtypeSql(req.params.rid)
+    ),
+    db.exec(
+      Recipe.deleteUtensilSql(req.params.rid)
     )
   );
   Promise.all(promises)
@@ -166,6 +201,18 @@ editRecipe = (req, res) => {
               Recipe.insertFoodtypeSql(
                 req.params.rid,
                 foodtype.foodtype_id,
+              )
+            )
+          );
+        });
+      }
+      if (req.body.utensils) {
+        req.body.utensils.forEach((utensil) => {
+          _promises.push(
+            db.exec(
+              Recipe.insertUtensilSql(
+                req.params.rid,
+                utensil.utensil_id,
               )
             )
           );

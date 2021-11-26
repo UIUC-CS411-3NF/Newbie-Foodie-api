@@ -30,6 +30,7 @@ require('./app/routes/user.routes')(app);
 require('./app/routes/recipe.routes')(app);
 require('./app/routes/ingredient.routes')(app);
 require('./app/routes/foodtype.routes')(app);
+require('./app/routes/utensil.routes')(app);
 require('./app/routes/sql.routes')(app);
 require('./app/routes/advsql.routes')(app);
 
