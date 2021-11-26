@@ -44,6 +44,7 @@ const db = {
   user: require("./user.model.js"),
   recipe: require("./recipe.model.js"),
   ingredient: require("./ingredient.model.js"),
+  foodtype: require("./foodtype.model.js"),
   exec: exec
 }
 
