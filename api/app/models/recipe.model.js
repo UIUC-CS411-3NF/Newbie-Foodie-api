@@ -50,6 +50,18 @@ deleteFoodtypeSql = (recipe_id) => {
   return `DELETE FROM RecipeFoodType WHERE recipe_id = ${recipe_id};`;
 }
 
+findUtensilSql = (recipe_id) => {
+  return `SELECT * FROM RecipeUtensil NATURAL JOIN Utensil WHERE recipe_id = ${recipe_id};`;
+}
+
+insertUtensilSql = (recipe_id, utensil_id) => {
+  return `INSERT INTO RecipeUtensil(recipe_id, utensil_id) VALUES (${recipe_id}, ${utensil_id});`;
+}
+
+deleteUtensilSql = (recipe_id) => {
+  return `DELETE FROM RecipeUtensil WHERE recipe_id = ${recipe_id};`;
+}
+
 const recipe = {
   getRandomSql: getRandomSql,
   findByAuthorSql: findByAuthorSql,
@@ -64,6 +76,9 @@ const recipe = {
   findFoodtypeSql: findFoodtypeSql,
   insertFoodtypeSql: insertFoodtypeSql,
   deleteFoodtypeSql: deleteFoodtypeSql,
+  findUtensilSql: findUtensilSql,
+  insertUtensilSql: insertUtensilSql,
+  deleteUtensilSql: deleteUtensilSql,
 };
 
 module.exports = recipe
