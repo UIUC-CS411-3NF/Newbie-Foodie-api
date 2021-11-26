@@ -1,92 +1,91 @@
 const db = require("../models");
-const recipe = db.recipe;
+const Recipe = db.recipe;
 
 findRecipe = (req, res) => {
   let sqlQuery;
   if (Object.keys(req.query).length === 0) {
-    sqlQuery = recipe.getRandomSql(20);
+    sqlQuery = Recipe.getRandomSql(20);
   } else if (req.query.uid) {
-    sqlQuery = recipe.findByAuthorSql(req.query.uid);
+    sqlQuery = Recipe.findByAuthorSql(req.query.uid);
   } else if (req.query.dish_name) {
-    sqlQuery = recipe.findByDishNameSql(req.query.dish_name);
+    sqlQuery = Recipe.findByDishNameSql(req.query.dish_name);
   }
 
-  db.exec(sqlQuery)
-    .then(results => {
-      console.log(results)
-      promises = [];
+  const getRecipePromise = db.exec(sqlQuery);
+  const getIngredientPromise = getRecipePromise
+    .then((results) => {
+      const promises = [];
       results.forEach(result => {
         result.ingredients = [];
-        promises.push(db.exec(recipe.findRequireIngredientSql(result.recipe_id)));
+        promises.push(db.exec(Recipe.findRequireIngredientSql(result.recipe_id)));
       });
-      Promise.all(promises).then(values => {
-        values.forEach((ingredients, idx) => {
-          ingredients.forEach(ingredient => {
-            delete ingredient.recipe_id;
-            results[idx].ingredients.push(ingredient);
-          });
+      return Promise.all(promises);
+    });
+
+  return Promise.all([getRecipePromise, getIngredientPromise])
+    .then(([recipes, ingredientResults]) => {
+      ingredientResults.forEach((ingredients, idx) => {
+        ingredients.forEach((ingredient) => {
+          delete ingredient.recipe_id;
+          recipes[idx].ingredients.push(ingredient);
         });
-        res.status(200).send(results);
       });
+      return res.status(200).send(recipes);
     })
-    .catch(error => {
-      res.status(400).send({
+    .catch((error) => {
+      return res.status(400).send({
         message: error.message
       });
-      return;
     });
 };
 
 findRecipeByID = (req, res) => {
-  db.exec(recipe.findByIDSql(req.params.rid))
+  db.exec(Recipe.findByIDSql(req.params.rid))
     .then(results => results[0])
     .then(result => {
       result.ingredients = [];
-      db.exec(recipe.findRequireIngredientSql(result.recipe_id))
+      db.exec(Recipe.findRequireIngredientSql(result.recipe_id))
         .then(ingredients => {
           ingredients.forEach(ingredient => {
             delete ingredient.recipe_id;
             result.ingredients.push(ingredient);
           })
-          res.status(200).send(result);
+          return res.status(200).send(result);
         })
     })
     .catch(error => {
-      res.status(400).send({
+      return res.status(400).send({
         message: error.message
       });
-      return;
     });
 };
 
 postRecipe = (req, res) => {
-  db.exec(recipe.insertNewSql(
+  db.exec(Recipe.insertNewSql(
       req.body.dish_name,
       req.body.cooking_time,
       req.body.description,
       req.userId
     ))
-    .then(result => {
-      console.log(result);
+    .then((result) => {
       const promises = [];
-      console.log(req.body.ingredients)
       if (req.body.ingredients) {
-        req.body.ingredients.forEach(ingredient => {
+        req.body.ingredients.forEach((ingredient) => {
           promises.push(
-            db.exec(recipe.insertRequireIngredientSql(result.insertId, ingredient.ingredient_id, ingredient.amount))
-          )
+            db.exec(Recipe.insertRequireIngredientSql(result.insertId, ingredient.ingredient_id, ingredient.amount))
+          );
         });
       }
-      Promise.all(promises).then((values) => {
-        res.status(200)
-          .send({ message: "Recipe was posted successfully!" });
-      });
+      return Promise.all(promises);
+    })
+    .then((values) => {
+      return res.status(200)
+        .send({ message: "Recipe was posted successfully!" });
     })
     .catch(error => {
-      res.status(400).send({
+      return res.status(400).send({
         message: error.message
       });
-      return;
     });
 };
 
@@ -94,7 +93,7 @@ editRecipe = (req, res) => {
   const promises = [];
   promises.push(
     db.exec(
-      recipe.editSql(
+      Recipe.editSql(
         req.body.dish_name,
         req.body.cooking_time,
         req.body.description,
@@ -104,7 +103,7 @@ editRecipe = (req, res) => {
   );
   promises.push(
     db.exec(
-      recipe.deleteRequireIngredientSql(req.params.rid)
+      Recipe.deleteRequireIngredientSql(req.params.rid)
     )
   );
   Promise.all(promises)
@@ -114,7 +113,7 @@ editRecipe = (req, res) => {
         req.body.ingredients.forEach((ingredient) => {
           _promises.push(
             db.exec(
-              recipe.insertRequireIngredientSql(
+              Recipe.insertRequireIngredientSql(
                 req.params.rid,
                 ingredient.ingredient_id,
                 ingredient.amount
@@ -123,39 +122,35 @@ editRecipe = (req, res) => {
           );
         });
       }
-      Promise.all(_promises).then((values) => {
-        res.status(200).send({ message: "Recipe was edited successfully!" });
-      });
+      return Promise.all(_promises);
+    })
+    .then((values) => {
+      res.status(200).send({ message: "Recipe was edited successfully!" });
     })
     .catch((error) => {
-      res.status(400).send({
+      return res.status(400).send({
         message: error.message,
       });
-      return;
     });
 };
 
 deleteRecipe = (req, res) => {
-  db.exec(recipe.deleteSql(req.params.rid, req.userId))
-    .then(results => {
-      console.log(results);
-      res.status(200)
+  db.exec(Recipe.deleteSql(req.params.rid, req.userId))
+    .then((results) => {
+      return res.status(200)
         .send({ message: "Recipe was deleted successfully!" });
     })
     .catch(error => {
-      res.status(400).send({
+      return res.status(400).send({
         message: error.message
       });
-      return;
     });
 };
 
-const Recipe = {
+module.exports = {
   findRecipe: findRecipe,
   findRecipeByID: findRecipeByID,
   postRecipe: postRecipe,
   editRecipe: editRecipe,
   deleteRecipe: deleteRecipe,
 };
-
-module.exports = Recipe;

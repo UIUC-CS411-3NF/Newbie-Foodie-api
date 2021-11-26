@@ -1,8 +1,8 @@
 const db = require("../models");
-const ingredient = db.ingredient;
+const Ingredient = db.ingredient;
 
 getAllIngredients = (req, res) => {
-  db.exec(ingredient.getAllSql())
+  db.exec(Ingredient.getAllSql())
     .then((results) => {
       res.status(200).send(results);
     })
@@ -14,8 +14,6 @@ getAllIngredients = (req, res) => {
     });
 };
 
-const Ingredient = {
+module.exports = {
   getAllIngredients: getAllIngredients,
 };
-
-module.exports = Ingredient;
