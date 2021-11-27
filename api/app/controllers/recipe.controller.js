@@ -1,5 +1,6 @@
 const db = require("../models");
 const Recipe = db.recipe;
+const Review = db.review;
 
 findRecipe = (req, res) => {
   let sqlQuery;
@@ -39,9 +40,18 @@ findRecipe = (req, res) => {
       });
       return Promise.all(promises);
     });
+  const getReviewPromise = getRecipePromise
+    .then((results) => {
+      const promises = [];
+      results.forEach(result => {
+        result.reviews = [];
+        promises.push(db.exec(Review.findByRecipeSql(result.recipe_id)));
+      });
+      return Promise.all(promises);
+    })
 
-  return Promise.all([getRecipePromise, getIngredientPromise, getFoodtypePromise, getUtensilPromise])
-    .then(([recipes, ingredientResults, foodtypeResults, utensilResults]) => {
+  return Promise.all([getRecipePromise, getIngredientPromise, getFoodtypePromise, getUtensilPromise, getReviewPromise])
+    .then(([recipes, ingredientResults, foodtypeResults, utensilResults, reviewResults]) => {
       ingredientResults.forEach((ingredients, idx) => {
         ingredients.forEach((ingredient) => {
           delete ingredient.recipe_id;
@@ -58,6 +68,12 @@ findRecipe = (req, res) => {
         utensils.forEach((utensil) => {
           delete utensil.recipe_id;
           recipes[idx].utensils.push(utensil);
+        });
+      });
+      reviewResults.forEach((reviews, idx) => {
+        reviews.forEach((review) => {
+          delete review.recipe_id;
+          recipes[idx].reviews.push(review);
         });
       });
       return res.status(200).send(recipes);
@@ -89,9 +105,15 @@ findRecipeByID = (req, res) => {
       result.utensils = [];
       return db.exec(Recipe.findUtensilSql(result.recipe_id));
     });
+  const getReviewPromise = getRecipePromise
+    .then((results) => results[0])
+    .then((result) => {
+      result.reviews = [];
+      return db.exec(Review.findByRecipeSql(result.recipe_id));
+    });
 
-  return Promise.all([getRecipePromise, getIngredientPromise, getFoodtypePromise, getUtensilPromise])
-    .then(([recipes, ingredients, foodtypes, utensils]) => {
+  return Promise.all([getRecipePromise, getIngredientPromise, getFoodtypePromise, getUtensilPromise, getReviewPromise])
+    .then(([recipes, ingredients, foodtypes, utensils, reviews]) => {
       recipe = recipes[0];
       ingredients.forEach((ingredient) => {
         delete ingredient.recipe_id;
@@ -104,6 +126,10 @@ findRecipeByID = (req, res) => {
       utensils.forEach((utensil) => {
         delete utensil.recipe_id;
         recipe.utensils.push(utensil);
+      });
+      reviews.forEach((review) => {
+        delete review.recipe_id;
+        recipe.reviews.push(review);
       });
       return res.status(200).send(recipe);
     })
