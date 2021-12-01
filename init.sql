@@ -68,6 +68,13 @@ CREATE TABLE Recipe (
     FOREIGN KEY (author_id) REFERENCES User(user_id) ON DELETE CASCADE
 );
 
+CREATE TABLE RecipeWeightedRate (
+    recipe_id INT PRIMARY KEY,
+    weighted_rate_sum INT DEFAULT 0,
+    weighted_rate_count INT DEFAULT 0,
+    FOREIGN KEY (recipe_id) REFERENCES Recipe(recipe_id) ON DELETE CASCADE
+);
+
 CREATE TABLE UserSaveRecipe (
     user_id INT,
     recipe_id INT,

@@ -1,4 +1,3 @@
-DROP PROCEDURE InsertReview;
 
 DELIMITER //
 CREATE PROCEDURE InsertReview(
@@ -103,10 +102,9 @@ BEGIN
 		CLOSE cur;
 	END;
 
+
     INSERT INTO UserReviewRecipe(user_id, recipe_id, rate, comment)
     VALUES (new_user_id, new_recipe_id, new_rate, new_comment);
 
 END //
 DELIMITER ;
-
-CALL InsertReview(5, 10, 3, "aa");
