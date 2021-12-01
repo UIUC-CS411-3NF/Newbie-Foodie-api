@@ -170,6 +170,7 @@ postRecipe = (req, res) => {
           );
         });
       }
+      promises.push(db.exec(Recipe.insertWeightedRateSql(result.insertId)));
       return Promise.all(promises);
     })
     .then((values) => {
