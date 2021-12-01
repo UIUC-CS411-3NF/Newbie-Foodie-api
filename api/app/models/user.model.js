@@ -14,16 +14,16 @@ findTopActiveSql = () => {
   return `SELECT user_id, email, username FROM User
     NATURAL JOIN (
       SELECT DISTINCT * FROM (
-        (SELECT user_id, COUNT(*) as num
+        (SELECT user_id
         FROM User JOIN Recipe ON author_id = user_id
         GROUP BY user_id
-        ORDER BY num DESC
+        ORDER BY COUNT(*) DESC
         LIMIT 5)
         UNION
-        (SELECT user_id, COUNT(*) as num
+        (SELECT user_id
         FROM UserReviewRecipe
         GROUP BY user_id
-        ORDER BY num DESC
+        ORDER BY COUNT(*) DESC
         LIMIT 5)
       ) AS Tin
     ) AS Tout`;
