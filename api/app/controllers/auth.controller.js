@@ -95,6 +95,7 @@ signin = (req, res) => {
         .json({ message: "Sign in successfully!" });
     })
     .catch(error => {
+      console.log(error)
       return res.status(400).send({
         message: error.message,
       });

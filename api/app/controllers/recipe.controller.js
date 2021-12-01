@@ -48,10 +48,18 @@ findRecipe = (req, res) => {
         promises.push(db.exec(Review.findByRecipeSql(result.recipe_id)));
       });
       return Promise.all(promises);
-    })
+    });
+  const getWeightedRatePromise = getRecipePromise
+    .then((results) => {
+      const promises = [];
+      results.forEach(result => {
+        promises.push(db.exec(Recipe.findWeightedRateByIDSql(result.recipe_id)));
+      });
+      return Promise.all(promises);
+    });
 
-  return Promise.all([getRecipePromise, getIngredientPromise, getFoodtypePromise, getUtensilPromise, getReviewPromise])
-    .then(([recipes, ingredientResults, foodtypeResults, utensilResults, reviewResults]) => {
+  return Promise.all([getRecipePromise, getIngredientPromise, getFoodtypePromise, getUtensilPromise, getReviewPromise, getWeightedRatePromise])
+    .then(([recipes, ingredientResults, foodtypeResults, utensilResults, reviewResults, weightedRateResults]) => {
       ingredientResults.forEach((ingredients, idx) => {
         ingredients.forEach((ingredient) => {
           delete ingredient.recipe_id;
@@ -76,9 +84,20 @@ findRecipe = (req, res) => {
           recipes[idx].reviews.push(review);
         });
       });
+      weightedRateResults.forEach((weightedRate, idx) => {
+        weightedRate = weightedRate[0];
+        if (weightedRate["weighted_rate_count"] == 0) {
+          recipes[idx].weightedRate = 0;
+        } else {
+          recipes[idx].weightedRate =
+            weightedRate["weighted_rate_sum"] /
+            weightedRate["weighted_rate_count"];
+        }
+      })
       return res.status(200).send(recipes);
     })
     .catch((error) => {
+      console.log(error)
       return res.status(400).send({
         message: error.message
       });
@@ -111,10 +130,22 @@ findRecipeByID = (req, res) => {
       result.reviews = [];
       return db.exec(Review.findByRecipeSql(result.recipe_id));
     });
+  const getWeightedRatePromise = getRecipePromise
+    .then((results) => results[0])
+    .then((result) => {
+      return db.exec(Recipe.findWeightedRateByIDSql(result.recipe_id));
+    });
 
-  return Promise.all([getRecipePromise, getIngredientPromise, getFoodtypePromise, getUtensilPromise, getReviewPromise])
-    .then(([recipes, ingredients, foodtypes, utensils, reviews]) => {
-      recipe = recipes[0];
+  return Promise.all([getRecipePromise,
+    getIngredientPromise,
+    getFoodtypePromise,
+    getUtensilPromise,
+    getReviewPromise,
+    getWeightedRatePromise
+  ])
+    .then(([recipes, ingredients, foodtypes, utensils, reviews, weightedRates]) => {
+      const recipe = recipes[0];
+      const weightedRate = weightedRates[0];
       ingredients.forEach((ingredient) => {
         delete ingredient.recipe_id;
         recipe.ingredients.push(ingredient);
@@ -131,9 +162,16 @@ findRecipeByID = (req, res) => {
         delete review.recipe_id;
         recipe.reviews.push(review);
       });
+      if (weightedRate['weighted_rate_count'] == 0) {
+        recipe.weightedRate = 0;
+      }
+      else {
+        recipe.weightedRate = weightedRate['weighted_rate_sum'] / weightedRate['weighted_rate_count'];
+      }
       return res.status(200).send(recipe);
     })
     .catch(error => {
+      console.log(error)
       return res.status(400).send({
         message: error.message
       });
@@ -170,6 +208,7 @@ postRecipe = (req, res) => {
           );
         });
       }
+      promises.push(db.exec(Recipe.insertWeightedRateSql(result.insertId)));
       return Promise.all(promises);
     })
     .then((values) => {

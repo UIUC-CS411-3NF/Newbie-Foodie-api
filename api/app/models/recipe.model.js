@@ -62,6 +62,14 @@ deleteUtensilSql = (recipe_id) => {
   return `DELETE FROM RecipeUtensil WHERE recipe_id = ${recipe_id};`;
 }
 
+insertWeightedRateSql = (recipe_id) => {
+  return `INSERT INTO RecipeWeightedRate(recipe_id) VALUES (${recipe_id});`;
+}
+
+findWeightedRateByIDSql = (recipe_id) => {
+  return `SELECT * FROM RecipeWeightedRate WHERE recipe_id = ${recipe_id};`;
+}
+
 const recipe = {
   getRandomSql: getRandomSql,
   findByAuthorSql: findByAuthorSql,
@@ -79,6 +87,8 @@ const recipe = {
   findUtensilSql: findUtensilSql,
   insertUtensilSql: insertUtensilSql,
   deleteUtensilSql: deleteUtensilSql,
+  insertWeightedRateSql: insertWeightedRateSql,
+  findWeightedRateByIDSql: findWeightedRateByIDSql,
 };
 
 module.exports = recipe
