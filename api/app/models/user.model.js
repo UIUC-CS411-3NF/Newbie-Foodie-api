@@ -15,7 +15,7 @@ findTopActiveSql = () => {
     NATURAL JOIN (
       SELECT DISTINCT * FROM (
         (SELECT user_id, COUNT(*) as num
-        FROM User JOIN Recipe WHERE author_id = user_id
+        FROM User JOIN Recipe ON author_id = user_id
         GROUP BY user_id
         ORDER BY num DESC
         LIMIT 5)
