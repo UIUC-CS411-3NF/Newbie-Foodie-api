@@ -87,7 +87,7 @@ signin = (req, res) => {
       // });
 
       return res
-        .cookie("access_token", token, {
+        .cookie("__session", token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
         })
@@ -104,7 +104,7 @@ signin = (req, res) => {
 
 signout = (req, res) => {
   return res
-    .clearCookie("access_token")
+    .clearCookie("__session")
     .status(200)
     .json({ message: "Sign out successfully!" });
 };
