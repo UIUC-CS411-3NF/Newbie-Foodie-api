@@ -11,4 +11,5 @@ module.exports = function (app) {
   });
 
   app.get("/api/v1/foodtype", controller.getAllFoodtypes);
+  app.get("/api/v1/foodtype/top3", controller.findTopThreeFoodtypes);
 };
