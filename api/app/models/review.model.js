@@ -11,16 +11,18 @@ findByIDSql = (review_id) => {
 };
 
 insertNewSql = (user_id, recipe_id, rate, comment) => {
-  return `INSERT INTO UserReviewRecipe(user_id, recipe_id, rate, comment) VALUES ('${user_id}', ${recipe_id}, '${rate}', '${comment}');`;
+  return `CALL InsertReview('${user_id}', ${recipe_id}, '${rate}', '${comment}');`;
 };
-
+/*
 editSql = (rate, comment, review_id) => {
   return `UPDATE Recipe SET rate = '${rate}', comment = '${comment}' WHERE user_review_recipe_id = '${review_id}';`;
 };
 
+// BUG: no param recipe_id
 deleteSql = (review_id, user_id, recipe_id) => {
   return `DELETE FROM Recipe WHERE user_review_recipe_id = '${review_id}' AND user_id = '${user_id}' AND recipe_id = '${recipe_id}';`;
 };
+*/
 
 const recipe = {
   findByUserSql: findByUserSql,
